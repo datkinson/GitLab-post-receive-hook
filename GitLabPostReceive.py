@@ -42,7 +42,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
     def parseRequest(self):
         length = int(self.headers.getheader('content-length'))
         body = self.rfile.read(length)
-	post = json.loads(body)
+	      post = json.loads(body)
         items = []
         items.append(post['repository']['url'])
         return items
@@ -59,12 +59,14 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
+        self.wfile.write('<html><body><p>OK</p></body></html>')
 
     def pull(self, path):
         if(not self.quiet):
             print "\nPost push request received"
             print 'Updating ' + path
         call(['cd "' + path + '" && git pull'], shell=True)
+        self.respond()
 
 def main():
     try:
