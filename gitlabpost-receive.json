@@ -4,6 +4,7 @@
         [{
                 "url": "gitlab@git.example.com:test-project.git",
                 "path": "/var/www/test-project",
+								"branch": "master",
                 "deploy": "echo deploying"
         }]
 }
