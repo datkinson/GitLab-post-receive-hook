@@ -1,0 +1,10 @@
+{
+        "port": 8001,
+        "repositories":
+        [{
+                "url": "gitlab@git.example.com:test-project.git",
+                "path": "/var/www/test-project",
+                "deploy": "echo deploying"
+        }]
+}
+
