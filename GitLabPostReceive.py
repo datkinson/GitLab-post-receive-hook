@@ -33,23 +33,24 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         return myClass.config
 
     def do_POST(self):
-        paths = self.getMatchingPaths(self.parseRequest())
-        for path in paths:
-            self.pull(path)
+        repositories = self.getMatchingPaths(self.parseRequest())
+        for repository in repositories:
+            self.pull(repository)
+        
 
     def parseRequest(self):
         length = int(self.headers.getheader('content-length'))
         body = self.rfile.read(length)
-	      post = json.loads(body)
-        items = {'url': post['repository']['url'], 'ref': post['repository']['ref']}
+	post = json.loads(body)
+        items = {'url': post['repository']['url'], 'ref': post['ref']}
         return items
 
     def getMatchingPaths(self, items):
         res = []
         config = self.getConfig()
         for repository in config['repositories']:
-            if(repository['url'] == items.url and repository['ref'] == items.ref):
-                res.append(repository['path'])
+            if(repository['url'] == items['url'] and repository['ref'] == items['ref']):
+                res.append(repository)
         return res
 
     def respond(self):
@@ -58,11 +59,13 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write('<html><body><p>OK</p></body></html>')
 
-    def pull(self, path):
+    def pull(self, repository):
         if(not self.quiet):
             print "\nPost push request received"
-            print 'Updating ' + path
-        call(['cd "' + path + '" && git pull'], shell=True)
+            print 'Updating ' + repository['path']
+        call(['cd "' + repository['path'] + '" && git pull'], shell=True)
+        if 'deploy' in repository:
+            call(['cd "' + repository['path'] + '" && ' + repository['deploy']], shell=True)
         self.respond()
 
 def main():
