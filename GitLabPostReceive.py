@@ -64,9 +64,9 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
             print "\nPost push request received"
             print 'Updating ' + repository['path']
         call(['cd "' + repository['path'] + '" && git pull'], shell=True)
+        self.respond()
         if 'deploy' in repository:
             call(['cd "' + repository['path'] + '" && ' + repository['deploy']], shell=True)
-        self.respond()
 
 def main():
     try:
